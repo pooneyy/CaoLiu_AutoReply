@@ -22,8 +22,16 @@ gobal_config:
     truecaptcha_config:
         userid: "xxxx"
         apikey: "xxxx"
+    # 腾讯云函数专用，用于向用户邮箱发送日志。
+    SMTP:
+        smtpHost: "" # SMTP服务器，例如stmp.qq.com
+        smtpUser: "" # SMTP用户名
+        smtpKey: "" # SMTP密码
+        smtp_sender: "" # 发件人邮箱地址
+        smtp_senderName: "caoliu自动回帖" # 发件人昵称
+        smtp_sendto: "" # 收件人邮箱地址
     # 自动更新
-    AutoUpdate: true
+    AutoUpdate: false
     # 循环间隔
     PollingTime: 5
     #回复次数限制，【新手上路】期上限为10。不宜过高，过高会被版主永久禁言（理由：灌水）

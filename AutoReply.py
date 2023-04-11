@@ -9,8 +9,9 @@ from time import sleep
 from typing import BinaryIO , Dict , List , Union
 import base64
 import logging.config ,sys
+from sendLog import sendLog
 
-__verison__ = "0.23.04.04.1"
+__verison__ = "2023.04.11__Based__0.23.04.04.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -22,7 +23,8 @@ def outputLog(projectName):
     console_handler.formatter = formatter
     log.addHandler(console_handler)
     #输出日志到文件
-    file_handler = logging.FileHandler(f'{projectName}.log', encoding='utf-8')
+    logdir = os.path.join('/tmp', f'{projectName}.log')
+    file_handler = logging.FileHandler(logdir, encoding='utf-8')
     file_handler.formatter = formatter
     file_handler.level = logging.DEBUG
     log.addHandler(file_handler)
@@ -31,7 +33,7 @@ def outputLog(projectName):
 log = outputLog("CaoLiu_AutoReply")
 
 try:
-    with open("config.yml", "r+", encoding='utf8') as file:
+    with open("config.yml", "r", encoding='utf8') as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 except FileNotFoundError:
     log.error("配置文件“config.yml”不存在！")
@@ -480,10 +482,10 @@ class User:
     def get_user_usd_prestige(self) -> str:
         sleep(2)
         res = requests.get(self.Index , headers = self.Headers , cookies = self.cookies, proxies = proxies)
-        pat_user_usd = "金錢: \d+"
-        user_usd = re.search(pat_user_usd , res.text).group(0).replace('金錢: ','')
-        pat_user_prestige = "威望: \d+"
-        user_prestige = re.search(pat_user_prestige , res.text).group(0).replace('威望: ','')
+        pat_user_usd = "金錢：\d+"
+        user_usd = re.search(pat_user_usd , res.text).group(0).replace('金錢：','')
+        pat_user_prestige = "威望：\d+"
+        user_prestige = re.search(pat_user_prestige , res.text).group(0).replace('威望：','')
         return f"{user_usd} USD , {user_prestige} 威望."
 
     def get_username(self) -> str:
@@ -502,59 +504,61 @@ class User:
     def get_sleep_time(self) -> int:
         return self.SleepTime
 
-latestVesion = getlatest()
-if __verison__ != latestVesion:
-    if AutoUpdate:
-        update(latestVesion)
-        os.system(f"python {os.path.basename(__file__)}")
-        os._exit(0)
-    else:log.info(f"有新版本 {latestVesion} https://github.com/0honus0/CaoLiu_AutoReply")
+def main_handler(event, context):
+    latestVesion = getlatest()
+    if __verison__ != latestVesion:
+        if AutoUpdate:
+            update(latestVesion)
+            os.system(f"python {os.path.basename(__file__)}")
+            os._exit(0)
+        else:log.info(f"有新版本 {latestVesion} https://github.com/0honus0/CaoLiu_AutoReply")
 
-users = []
-for i in range(len(usersList)):
-    user=User(usersList[i]['user'],usersList[i]['password'],usersList[i]['secret'])
-    user.check_cookies_and_login()
-    if user.get_invalid():
-        continue
-    user.get_today_list()
-    sleep_time = random.randint(TimeIntervalStart,TimeIntervalEnd)
-    log.info(f"{user.get_username()} sleep {sleep_time} seconds")
-    user.set_sleep_time(sleep_time)
-    users.append(user)
-
-log.info("--------------------->>>")
-for user in users:
-    log.info(f"{user.get_username()} : {user.get_user_usd_prestige()}")
-log.info("--------------------->>>")
-
-while True:
-    return_flag = True
-    for user in users:        
+    users = []
+    for i in range(len(usersList)):
+        user=User(usersList[i]['user'],usersList[i]['password'],usersList[i]['secret'])
+        user.check_cookies_and_login()
         if user.get_invalid():
             continue
-        else:
-            return_flag = False
-        if user.get_sleep_time() > 0:
-            user.set_sleep_time(user.get_sleep_time() - PollingTime)
-            continue
-        url = user.get_one_link()
-        if url is None:
-            user.set_invalid()
-            continue
-        user.browse(url)
-        if not user.reply(url):
-            user.set_invalid()
-            continue        
-        user.like(url)
+        user.get_today_list()
         sleep_time = random.randint(TimeIntervalStart,TimeIntervalEnd)
-        log.debug(f"{user.get_username()} sleep {sleep_time} seconds")
+        log.info(f"{user.get_username()} sleep {sleep_time} seconds")
         user.set_sleep_time(sleep_time)
+        users.append(user)
 
-    if return_flag:
-        log.info("--------------------->>>")
-        for user in users:
-            log.info(f"{user.get_username()} : {user.get_user_usd_prestige()}")
-        log.info("--------------------->>>")
-        os._exit(0)
+    log.info("--------------------->>>")
+    for user in users:
+        log.info(f"{user.get_username()} : {user.get_user_usd_prestige()}")
+    log.info("--------------------->>>")
 
-    sleep(PollingTime)
+    while True:
+        return_flag = True
+        for user in users:        
+            if user.get_invalid():
+                continue
+            else:
+                return_flag = False
+            if user.get_sleep_time() > 0:
+                user.set_sleep_time(user.get_sleep_time() - PollingTime)
+                continue
+            url = user.get_one_link()
+            if url is None:
+                user.set_invalid()
+                continue
+            user.browse(url)
+            if not user.reply(url):
+                user.set_invalid()
+                continue        
+            user.like(url)
+            sleep_time = random.randint(TimeIntervalStart,TimeIntervalEnd)
+            log.debug(f"{user.get_username()} sleep {sleep_time} seconds")
+            user.set_sleep_time(sleep_time)
+
+        if return_flag:
+            log.info("--------------------->>>")
+            for user in users:
+                log.info(f"{user.get_username()} : {user.get_user_usd_prestige()}")
+            log.info("--------------------->>>")
+            sendLog('CaoLiu_AutoReply')
+            break
+
+        sleep(PollingTime)

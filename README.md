@@ -6,15 +6,19 @@
 
 ### 腾讯云函数配置
 
+- 创建一个云函数，选择“从头开始”创建。
+
 - 运行环境：设为 `Python 3.6` 或 `Python 3.7`；
 
-  ![image-20230411220149663](https://s2.loli.net/2023/04/11/FKfhqoz5uZejnxw.png)
+  ![image-20230412101036409](https://s2.loli.net/2023/03/24/Xd1nxSzBUrQkDH5.png)
 
 - 时区：设为  `Asia/Shanghai(北京时间)`；
 
 - **执行方法**：**请设为 `AutoReply.main_handler`**
 
-  ![image-20230411220324907](https://s2.loli.net/2023/04/11/PGcLsi9By7TXgtJ.png)
+- 将index.py的文件名修改为`AutoReply.py`，并将AutoReply.py的内容粘贴过来
+
+- ![image-20230412101834427](https://s2.loli.net/2023/04/12/WoC7QlhORyZFws6.png)
 
 - 执行超时时间：请按照实际运行时间设定，应略大于实际运行时间。红框是因为未启用异步执行。
 
@@ -26,6 +30,12 @@
 
   ![image-20230411220658627](https://s2.loli.net/2023/04/11/fPKwAZF52qg1LYp.png)
 
+- 将配置文件 `config.example.yml`，重命名为 `config.yml`，按照提示修改内容即可，
+
+- 上传相关的文件：
+
+  ![image-20230412103258289](https://s2.loli.net/2023/04/12/yk1bPNMqaKh2Afp.png)
+  
 - 安装依赖：
 
   ```shell
@@ -34,8 +44,6 @@
   
   ![image-20230411220804302](https://s2.loli.net/2023/04/11/IDvdqgFNrXt9SQs.png)
   
-- 将配置文件 `config.example.yml`，重命名为 `config.yml`，按照提示修改内容即可，
-
 - **部署函数**
 
   ![image-20230411215251860](https://s2.loli.net/2023/04/11/lpKjOnZki7UxwQH.png)

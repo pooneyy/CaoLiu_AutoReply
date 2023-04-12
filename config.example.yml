@@ -30,7 +30,7 @@ gobal_config:
         smtp_sender: "" # 发件人邮箱地址
         smtp_senderName: "caoliu自动回帖" # 发件人昵称
         smtp_sendto: "" # 收件人邮箱地址
-    # 自动更新
+    # 自动更新，在云函数运行时，请禁用更新，因为更新后将从上游获取的代码不支持云函数。
     AutoUpdate: false
     # 循环间隔
     PollingTime: 5

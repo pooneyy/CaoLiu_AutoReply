@@ -16,7 +16,7 @@ smtpUser : str = config.get("gobal_config").get("SMTP").get("smtpUser")
 smtpKey : str = config.get("gobal_config").get("SMTP").get("smtpKey")
 smtp_sender : str = config.get("gobal_config").get("SMTP").get("smtp_sender")
 smtp_senderName : str = config.get("gobal_config").get("SMTP").get("smtp_senderName", "caoliu自动回帖")
-stmp_sendto : str = config.get("gobal_config").get("SMTP").get("smtp_sendto")
+smtp_sendto : str = config.get("gobal_config").get("SMTP").get("smtp_sendto")
 
 def sendLog(projectName):
     '''向邮箱发送附件'''
@@ -24,7 +24,7 @@ def sendLog(projectName):
     mail = MIMEMultipart()
     mail['Subject'] = Header("caoliu回帖日志", 'utf-8')
     mail['From'] = formataddr((smtp_senderName, smtp_sender), "utf-8")
-    mail['To'] = formataddr((None, stmp_sendto), "utf-8")
+    mail['To'] = formataddr((None, smtp_sendto), "utf-8")
     mail.attach(MIMEText("日志见附件", 'html', 'utf-8'))
     att = MIMEText(open(attachmentsFileName, 'r').read(), 'base64', 'utf-8')
     att["Content-Type"] = 'application/octet-stream'
@@ -32,4 +32,4 @@ def sendLog(projectName):
     mail.attach(att)
     smtpObj = smtplib.SMTP_SSL(smtpHost, 465)
     smtpObj.login(smtpUser, smtpKey)
-    smtpObj.sendmail(smtp_sender, stmp_sendto, mail.as_string())
+    smtpObj.sendmail(smtp_sender, smtp_sendto, mail.as_string())

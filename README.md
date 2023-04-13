@@ -25,11 +25,13 @@
 
 - 时区：设为  `Asia/Shanghai(北京时间)`；
 
-- **执行方法**：**请设为 `AutoReply.main_handler`**
+- 提交方法：选择本地上传zip包
 
-- 将index.py的文件名修改为`AutoReply.py`，并将AutoReply.py的内容粘贴过来
+- 执行方法：请设为 `index.main_handler`（默认）
 
-- ![image-20230412101834427](https://s2.loli.net/2023/04/12/WoC7QlhORyZFws6.png)
+- [获取代码包](https://github.com/pooneyy/CaoLiu_AutoReply/releases/latest)。将其上传：
+
+  ![image-20230413092951560](C:/Users/29451/AppData/Roaming/Typora/typora-user-images/image-20230413092951560.png)
 
 - 执行超时时间：请按照实际运行时间设定，应略大于实际运行时间。红框是因为未启用异步执行。
 
@@ -45,17 +47,15 @@
 
 - 上传相关的文件：
 
+  现在你只需上传Cookie（如果有的话）。config.yml、requirements.txt、sendLog.py不需要上传了、
+  
   ![image-20230412103258289](https://s2.loli.net/2023/04/12/yk1bPNMqaKh2Afp.png)
   
-- 安装依赖：
+- ~~安装依赖：~~
 
-  ```shell
-  pip3 install -r ./src/requirements.txt -t ./src/
-  ```
-  
-  ![image-20230411220804302](https://s2.loli.net/2023/04/11/IDvdqgFNrXt9SQs.png)
-  
-- **部署函数**
+  代码包包含依赖。
+
+- **部署函数**：云函数只有部署才会生效。
 
   ![image-20230411215251860](https://s2.loli.net/2023/04/11/lpKjOnZki7UxwQH.png)
 

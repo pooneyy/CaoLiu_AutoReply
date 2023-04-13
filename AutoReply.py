@@ -11,7 +11,7 @@ import base64
 import logging.config ,sys
 from sendLog import sendLog
 
-__verison__ = "2023.04.11__Based__0.23.04.04.1"
+__verison__ = "2023.04.13-Based-0.23.04.04.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -42,7 +42,7 @@ except FileNotFoundError:
 usersList = config.get("users_config")
 userid : str = config.get("gobal_config").get("truecaptcha_config").get("userid")
 apikey : str = config.get("gobal_config").get("truecaptcha_config").get("apikey")
-AutoUpdate : bool = config.get("gobal_config").get("AutoUpdate", True)
+AutoUpdate : bool = False
 PollingTime : int = config.get("gobal_config").get("PollingTime", 5)
 ReplyLimit : int = config.get("gobal_config").get("ReplyLimit", 10)
 Forbid : bool = config.get("gobal_config").get("Forbid", True)
@@ -59,7 +59,7 @@ else:
     proxies = {}
 
 def getlatest():
-    url = "https://api.github.com/repos/0honus0/CaoLiu_AutoReply/releases/latest"
+    url = "https://api.github.com/repos/pooneyy/CaoLiu_AutoReply/releases/latest"
     try:
         response = requests.get(url, proxies = proxies)
         latest = json.loads(response.text)["tag_name"]
@@ -90,12 +90,13 @@ def retry(func):
     return deco
 
 def save_cookies(session : requests.Session , filename : str) -> None:
-    with open(filename, 'wb') as f:
-        try:
-            pickle.dump(session.cookies, f)
-            log.debug(f"save {filename} success")
-        except:
-            ...
+    ...
+    # with open(filename, 'wb') as f:
+    #     try:
+    #         pickle.dump(session.cookies, f)
+    #         log.debug(f"save {filename} success")
+    #     except:
+    #         ...
 
 def load_cookies(session : requests.Session , filename : str) -> None:
     with open(filename, 'rb') as f:
@@ -482,9 +483,9 @@ class User:
     def get_user_usd_prestige(self) -> str:
         sleep(2)
         res = requests.get(self.Index , headers = self.Headers , cookies = self.cookies, proxies = proxies)
-        pat_user_usd = "金錢：\d+"
+        pat_user_usd = r"金錢：\d+"
         user_usd = re.search(pat_user_usd , res.text).group(0).replace('金錢：','')
-        pat_user_prestige = "威望：\d+"
+        pat_user_prestige = r"威望：\d+"
         user_prestige = re.search(pat_user_prestige , res.text).group(0).replace('威望：','')
         return f"{user_usd} USD , {user_prestige} 威望."
 
@@ -511,7 +512,7 @@ def main_handler(event, context):
             update(latestVesion)
             os.system(f"python {os.path.basename(__file__)}")
             os._exit(0)
-        else:log.info(f"有新版本 {latestVesion} https://github.com/0honus0/CaoLiu_AutoReply")
+        else:log.info(f"有新版本 {latestVesion} https://github.com/pooneyy/CaoLiu_AutoReply")
 
     users = []
     for i in range(len(usersList)):

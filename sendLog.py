@@ -28,7 +28,7 @@ def sendLog(projectName):
     mail.attach(MIMEText("日志见附件", 'html', 'utf-8'))
     att = MIMEText(open(attachmentsFileName, 'r').read(), 'base64', 'utf-8')
     att["Content-Type"] = 'application/octet-stream'
-    att["Content-Disposition"] = f"attachment; filename = {attachmentsFileName + '.txt'}"
+    att["Content-Disposition"] = f"attachment; filename = {projectName + '.txt'}"
     mail.attach(att)
     smtpObj = smtplib.SMTP_SSL(smtpHost, 465)
     smtpObj.login(smtpUser, smtpKey)

@@ -11,7 +11,7 @@ import base64
 import logging.config ,sys
 from sendLog import sendLog
 
-__verison__ = "2023.04.13-Based-0.23.04.04.1"
+__verison__ = "2023.04.23-Based-0.23.04.04.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -57,6 +57,7 @@ if Proxy:
     proxies = config.get("gobal_config").get("Proxies")
 else:
     proxies = {}
+DebugMode : bool = config.get("gobal_config").get("DebugMode", False)
 
 def getlatest():
     url = "https://api.github.com/repos/pooneyy/CaoLiu_AutoReply/releases/latest"
@@ -505,7 +506,7 @@ class User:
     def get_sleep_time(self) -> int:
         return self.SleepTime
 
-def main_handler(event, context):
+def main():
     latestVesion = getlatest()
     if __verison__ != latestVesion:
         if AutoUpdate:
@@ -563,3 +564,22 @@ def main_handler(event, context):
             break
 
         sleep(PollingTime)
+
+def checkHosts():
+    log.info("检查域名")
+    url = 'https://s.cky.qystu.cc/gh/pooneyy/1024-Host-List@main/1024_hosts.json'
+    hosts = json.loads(requests.get(url).text)
+    headers = {
+        'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
+}
+    for i in hosts:
+        try:
+            requests.get(f'https://{i}/index.php', headers=headers)
+            log.info(f"检查 {i} ：能访问")
+        except requests.exceptions.ConnectionError:
+            log.info(f"检查 {i} ：不能访问")
+    sendLog('CaoLiu_AutoReply')
+
+def main_handler(event, context):
+    if DebugMode:checkHosts()
+    else:main()

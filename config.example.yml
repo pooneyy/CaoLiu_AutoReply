@@ -55,3 +55,5 @@ gobal_config:
     Proxies:
         http : "http://127.0.0.1:7890"
         https: "http://127.0.0.1:7890"
+    # 调试模式，该模式下将会测试社区的域名是否可用，并不会执行自动回帖任务。
+    DebugMode: False

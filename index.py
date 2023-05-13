@@ -11,7 +11,7 @@ import base64
 import logging.config ,sys
 from sendLog import sendLog
 
-__verison__ = "2023.04.23-Based-0.23.04.04.1"
+__verison__ = "2023.05.13-Based-0.23.05.13.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")

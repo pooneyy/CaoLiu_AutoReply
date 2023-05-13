@@ -1,10 +1,13 @@
 # CaoLiu_AutoReply（腾讯云函数）
 
-注：此分支基于 [0honus0/CaoLiu_AutoReply at 832398a5bca0850913b096069aa33dd66475c99e](https://github.com/0honus0/CaoLiu_AutoReply/tree/832398a5bca0850913b096069aa33dd66475c99e)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
+注：此分支基于 [0honus0/CaoLiu_AutoReply at e56733aac744bdfe380129fd33c2d8d0a09105f5](https://github.com/0honus0/CaoLiu_AutoReply/tree/e56733aac744bdfe380129fd33c2d8d0a09105f5)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
 
 ### 更新日志
 
 ```
+2023.05.13-Based-0.23.05.13.1
+           更新：配置文件新增关键字屏蔽
+
 2023.04.23-Based-0.23.04.04.1
            更新：新增调试模式。
                 该模式下将会测试社区的域名是否可用，并不会执行自动回帖任务。

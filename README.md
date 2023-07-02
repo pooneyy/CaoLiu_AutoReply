@@ -1,10 +1,14 @@
 # CaoLiu_AutoReply（腾讯云函数）
 
-注：此分支基于 [0honus0/CaoLiu_AutoReply at e56733aac744bdfe380129fd33c2d8d0a09105f5](https://github.com/0honus0/CaoLiu_AutoReply/tree/e56733aac744bdfe380129fd33c2d8d0a09105f5)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
+注：此分支基于 [0honus0/CaoLiu_AutoReply at 7698edb87567d8a5b0e78a9dbd28df235442b38d](https://github.com/0honus0/CaoLiu_AutoReply/tree/7698edb87567d8a5b0e78a9dbd28df235442b38d)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
 
 ### 更新日志
 
 ```
+2023.07.02-Based-0.23.07.01.1
+           从上游仓库同步更新，Commit：“增加回复板块选择，修改登陆参数”
+           更新了config.example.yml
+
 2023.05.16-Based-0.23.05.13.1
            修复了同一个帖子重复回复的问题。
 

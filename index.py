@@ -11,7 +11,7 @@ import base64
 import logging.config ,sys
 from sendLog import sendLog
 
-__verison__ = "2023.07.02-Based-0.23.07.01.1"
+__verison__ = "2023.07.20-Based-0.23.07.03.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -374,7 +374,7 @@ class User:
         sleep(2)
         res = requests.get(self.Personal_posted , headers = self.Headers , cookies = self.cookies, proxies = proxies)
         content = res.text
-        posted_pat_title_rule : str = '<a[^>]+class="a2">([^<]+)'
+        posted_pat_title_rule : str = '<a[^>]+class="a2">(?:<font[^>]+>)?([^<]+)(?:<\/font>)?<\/a>'
         posted_pat_title = re.findall(posted_pat_title_rule, content)
         self.excludeContent.extend(posted_pat_title)
 
@@ -599,7 +599,7 @@ def checkHosts():
             log.info(f"检查 {i} ：能访问")
         except requests.exceptions.ConnectionError:
             log.info(f"检查 {i} ：不能访问")
-    sendLog('CaoLiu_AutoReply')
+    sendLog('CaoLiu_AutoReply', ' - 调试模式')
 
 def main_handler(event, context):
     if DebugMode:checkHosts()

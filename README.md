@@ -1,10 +1,15 @@
 # CaoLiu_AutoReply（腾讯云函数）
 
-注：此分支基于 [0honus0/CaoLiu_AutoReply at 7698edb87567d8a5b0e78a9dbd28df235442b38d](https://github.com/0honus0/CaoLiu_AutoReply/tree/7698edb87567d8a5b0e78a9dbd28df235442b38d)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
+注：当前分支基于 [0honus0/CaoLiu_AutoReply at 708c2d277c17277411eb120d43e0c2fbb4146c09](https://github.com/0honus0/CaoLiu_AutoReply/tree/708c2d277c17277411eb120d43e0c2fbb4146c09)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
 
 ### 更新日志
 
 ```
+2023.07.20-Based-0.23.07.01.1
+           从上游仓库同步更新，Commit：“更新版本号”
+           修复在获取已回复帖子列表时无法识别置顶帖（绿色链接）的问题
+           注：更新了config.example.yml
+
 2023.07.02-Based-0.23.07.01.1
            从上游仓库同步更新，Commit：“增加回复板块选择，修改登陆参数”
            更新了config.example.yml
@@ -35,6 +40,8 @@
 
 ### 腾讯云函数配置
 
+由于国内节点经常屏蔽社区域名，建议使用海外节点创建云函数。
+
 - 创建一个云函数，选择“从头开始”创建。
 
 - 运行环境：设为 `Python 3.6` 或 `Python 3.7`；
@@ -53,12 +60,19 @@
 
 - 执行超时时间：请按照实际运行时间设定，应略大于实际运行时间。红框是因为未启用异步执行。
 
-  - 计算执行超时时间：在`config.yml`文件内寻找参数`TimeIntervalEnd`（时间间隔最大值）执行超时时间应大于该参数的值*11，如`TimeIntervalEnd: 2048`，那么执行超时时间应大于`(2048+5)*11`，即`22583`，这是比较稳妥的，可以避免因超时而云函数退出。
+  - 计算执行超时时间：在`config.yml`文件内寻找参数`TimeIntervalEnd`（时间间隔最大值），执行超时时间应大于该参数加上`PollingTime`（循环间隔）之和乘以`ReplyLimit`（回复次数限制）加上1之和的值。
+
+  - 具体公式为：`(TimeIntervalEnd + PollingTime) * (ReplyLimit + 1)`
+
+  - 如`TimeIntervalEnd: 2048`，那么执行超时时间应大于`(2048+5)*11`，即`22583`，这是比较稳妥的，可以避免因超时而云函数退出。
+
+  - 为了便于计算，现已加入执行超时时间计算器`ExecutionTimeoutCalculator.py`可使用它快速计算
+
+    ![image-20230720211140098](https://s2.loli.net/2023/07/20/XVYTS8baLwxh3c7.png)
 
   - 需要注意的是，由于开启异步执行后，云函数超时时间最大值为`86400`秒，所以`TimeIntervalEnd`的值不应大于`7849`
 
-
-  ![image-20230411220418260](https://s2.loli.net/2023/04/11/IDLkK2JBTPOAMoe.png)
+    ![image-20230411220418260](https://s2.loli.net/2023/04/11/IDLkK2JBTPOAMoe.png)
 
 - 日志配置：可不配置日志
 

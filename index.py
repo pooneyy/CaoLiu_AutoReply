@@ -11,7 +11,7 @@ import base64
 import logging.config ,sys
 from sendLog import sendLog
 
-__verison__ = "2023.07.20-Based-0.23.07.03.1"
+__verison__ = "2023.08.02-Based-0.23.07.03.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -268,6 +268,9 @@ class User:
         if self.Retry > 0:
             log.debug(f"{self.username} retry login,remaining retry times: %d" % self.Retry)
             self.Retry -= 1
+            sleep_time = random.randint(6,60)
+            log.info(f"{self.username} sleep {sleep_time} seconds")
+            sleep(sleep_time)
             if self.login():
                 return True
         else:

@@ -24,7 +24,7 @@ def outputLog(projectName):
     log.addHandler(console_handler)
     #输出日志到文件
     logdir = os.path.join('/tmp', f'{projectName}.log')
-    file_handler = logging.FileHandler(logdir, encoding='utf-8')
+    file_handler = logging.FileHandler(logdir, mode='w', encoding='utf-8')
     file_handler.formatter = formatter
     file_handler.level = logging.DEBUG
     log.addHandler(file_handler)

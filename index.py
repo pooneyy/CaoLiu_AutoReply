@@ -11,7 +11,7 @@ import base64
 import logging.config ,sys
 from sendLog import sendLog
 
-__verison__ = "2023.08.02-Based-0.23.07.03.1"
+__verison__ = "2023.09.01-Based-0.23.07.03.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -605,5 +605,9 @@ def checkHosts():
     sendLog('CaoLiu_AutoReply', ' - 调试模式')
 
 def main_handler(event, context):
+    if DebugMode:checkHosts()
+    else:main()
+
+if __name__ == '__main__':
     if DebugMode:checkHosts()
     else:main()

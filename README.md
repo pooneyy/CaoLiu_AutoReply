@@ -1,10 +1,19 @@
 # CaoLiu_AutoReply（腾讯云函数）
 
-注：当前分支基于 [0honus0/CaoLiu_AutoReply at 708c2d277c17277411eb120d43e0c2fbb4146c09](https://github.com/0honus0/CaoLiu_AutoReply/tree/708c2d277c17277411eb120d43e0c2fbb4146c09)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
+注：当前分支基于 [0honus0/CaoLiu_AutoReply at 49bc1083b8081bf562ad81a097b49a39b0731ecf](https://github.com/0honus0/CaoLiu_AutoReply/tree/49bc1083b8081bf562ad81a097b49a39b0731ecf)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
 
 ### 更新日志
 
 ```
+2023.09.07-Based-0.23.09.07.1
+           从上游仓库同步更新，Commit：“修正一处文本描述的错误 (#30)”
+           新增 1 自定义配置文件名
+                  在配置里增加一项“LogFileName”，如果这项不存在，则取值“CaoLiu_AutoReply”
+                2 新增一个回帖异常处理
+                  新增对遇到帖子被锁定时的处理
+                3 配置文件不存在的报错输出到日志
+                  配置文件“config.yml”不存在，也会输出到日志里
+
 2023.09.01-Based-0.23.07.03.1
            基于腾讯云函数“阅后即焚”的特性，将日志写入模式设置为覆盖写入
 

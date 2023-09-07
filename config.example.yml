@@ -1,6 +1,7 @@
 # 用户配置，每一组是一个账号,按需进行增减。
 users_config:
     # 注意每行的缩进，建议复制样例再修改。
+    # 同时启用的帐号过多，程序可能会无响应，以少于5个为宜，账号过多时可以通过多开解决
         # 账号1
     -   user: "AAA" # 用户名
         password: "AAA" # 密码
@@ -30,7 +31,9 @@ gobal_config:
         smtp_sender: "" # 发件人邮箱地址
         smtp_senderName: "caoliu自动回帖" # 发件人昵称
         smtp_sendto: "" # 收件人邮箱地址
-    # 自动更新，在云函数运行时，请禁用更新，因为更新后将从上游获取的代码不支持云函数。
+    # 日志文件文件名，默认值为 "CaoLiu_AutoReply"
+    LogFileName: "CaoLiu_AutoReply"
+    # 自动更新，在使用云函数时，请禁用更新，由于云函数的特性请手动上传代码更新。
     AutoUpdate: false
     # 回复板块 
     #    4:'欧美原创区'      5:'动漫原创区'

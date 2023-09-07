@@ -11,7 +11,9 @@ import base64
 import logging.config ,sys
 from sendLog import sendLog
 
-__verison__ = "2023.09.01-Based-0.23.07.03.1"
+DEBUG = False
+
+__verison__ = "2023.09.07-Based-0.23.09.07.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -30,27 +32,27 @@ def outputLog(projectName):
     log.addHandler(file_handler)
     return log
 
-log = outputLog("CaoLiu_AutoReply")
-
 try:
     with open("config.yml", "r", encoding='utf8') as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 except FileNotFoundError:
+    log = outputLog('CaoLiu_AutoReply')
     log.error("配置文件“config.yml”不存在！")
     os._exit(0)
 
 usersList = config.get("users_config")
 userid : str = config.get("gobal_config").get("truecaptcha_config").get("userid")
 apikey : str = config.get("gobal_config").get("truecaptcha_config").get("apikey")
-AutoUpdate : bool = False
+LogFileName : str = config.get("gobal_config").get("LogFileName", "CaoLiu_AutoReply")
+AutoUpdate : bool = config.get("gobal_config").get("AutoUpdate", False)
 Fid : int = config.get("gobal_config").get("Fid", 7)
 PollingTime : int = config.get("gobal_config").get("PollingTime", 5)
 ReplyLimit : int = config.get("gobal_config").get("ReplyLimit", 10)
 Forbid : bool = config.get("gobal_config").get("Forbid", True)
 Input_self : bool = config.get("gobal_config").get("Input_self", False)
 Like : bool = config.get("gobal_config").get("Like", True)
-TimeIntervalStart : bool = config.get("gobal_config").get("TimeIntervalStart", 1024)
-TimeIntervalEnd : bool = config.get("gobal_config").get("TimeIntervalEnd", 2048)
+TimeIntervalStart : int = config.get("gobal_config").get("TimeIntervalStart", 1024)
+TimeIntervalEnd : int = config.get("gobal_config").get("TimeIntervalEnd", 2048)
 ReplyContent : List = config.get("gobal_config").get("ReplyContent")
 ForbidContent : List = config.get("gobal_config").get("ForbidContent")
 Proxy : bool = config.get("gobal_config").get("Proxy", False)
@@ -59,6 +61,8 @@ if Proxy:
 else:
     proxies = {}
 DebugMode : bool = config.get("gobal_config").get("DebugMode", False)
+
+log = outputLog(LogFileName)
 
 def getlatest():
     url = "https://api.github.com/repos/pooneyy/CaoLiu_AutoReply/releases/latest"
@@ -69,7 +73,7 @@ def getlatest():
     except:return __verison__
 
 def update(latestVesion):
-    url = f"https://fastly.jsdelivr.net/gh/0honus0/CaoLiu_AutoReply@{latestVesion}/AutoReply.py"
+    url = f"https://fastly.jsdelivr.net/gh/pooneyy/CaoLiu_AutoReply@{latestVesion}/AutoReply.py"
     try:
         response = requests.get(url, proxies = proxies)
         with open(os.path.basename(__file__), 'wb') as f:
@@ -312,13 +316,16 @@ class User:
             'action': 'reply',
             'fid': str(Fid),
             'tid':  tid,
-            'atc_attachment': 'none',
+            'page': 'h',
+            # 'atc_attachment': 'none',
             'pid':'',
             'article':'',
             'touid':'',
-            'verify':'verify'
+            'verify':'verify',
+            'Submit': '正在提交回覆..',
         }
         res = requests.post(url = self.Post , data = data , headers = self.Headers , cookies = self.cookies , proxies = proxies)
+        if DEBUG:  print(res.text)
         if res.text.find("發貼完畢點擊進入主題列表") != -1:
             self.ReplyCount -= 1
             log.info(f"{self.username} reply {title} with {content} success , remaining reply times: {self.ReplyCount}" )
@@ -337,6 +344,9 @@ class User:
             return True
         elif res.text.find("尚未開啟兩步驗證") != -1:
             log.info(f"{self.username} reply failed , user not open two steps verify")
+            return True
+        elif res.text.find("該貼已被鎖定") != -1:
+            log.info(f"{self.username} reply failed , the thread is locked")
             return True
         else:
             log.error(f"{self.username} reply {url} failed , unknown error")
@@ -530,8 +540,6 @@ def main():
     if __verison__ != latestVesion:
         if AutoUpdate:
             update(latestVesion)
-            os.system(f"python {os.path.basename(__file__)}")
-            os._exit(0)
         else:log.info(f"有新版本 {latestVesion} https://github.com/pooneyy/CaoLiu_AutoReply")
 
     users = []
@@ -542,9 +550,10 @@ def main():
             continue
         user.get_personal_posted_list()
         user.get_today_list()
-        sleep_time = random.randint(TimeIntervalStart,TimeIntervalEnd)
-        log.info(f"{user.get_username()} sleep {sleep_time} seconds")
-        user.set_sleep_time(sleep_time)
+        if not DEBUG:
+            sleep_time = random.randint(TimeIntervalStart,TimeIntervalEnd)
+            log.info(f"{user.get_username()} sleep {sleep_time} seconds")
+            user.set_sleep_time(sleep_time)
         users.append(user)
 
     if len(users) == 0:
@@ -584,7 +593,7 @@ def main():
             for user in users:
                 log.info(f"{user.get_username()} : {user.get_user_usd_prestige()}")
             log.info("--------------------->>>")
-            sendLog('CaoLiu_AutoReply')
+            sendLog(LogFileName)
             break
 
         sleep(PollingTime)
@@ -602,7 +611,7 @@ def checkHosts():
             log.info(f"检查 {i} ：能访问")
         except requests.exceptions.ConnectionError:
             log.info(f"检查 {i} ：不能访问")
-    sendLog('CaoLiu_AutoReply', ' - 调试模式')
+    sendLog(LogFileName, ' - 调试模式')
 
 def main_handler(event, context):
     if DebugMode:checkHosts()

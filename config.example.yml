@@ -26,6 +26,7 @@ gobal_config:
     # 腾讯云函数专用，用于向用户邮箱发送日志。
     SMTP:
         smtpHost: "" # SMTP服务器，例如smtp.qq.com
+        smtpPort: 25 # SMTP端口，例如465
         smtpUser: "" # SMTP用户名
         smtpKey: "" # SMTP密码
         smtp_sender: "" # 发件人邮箱地址

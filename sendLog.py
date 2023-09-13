@@ -12,7 +12,8 @@ try:
 except FileNotFoundError:...
 
 smtpHost : str = config.get("gobal_config").get("SMTP").get("smtpHost")
-stmpPort : int = config.get("gobal_config").get("SMTP").get("stmpPort")
+smtp_is_SSL : bool = config.get("gobal_config").get("SMTP").get("smtp_is_SSL",False)
+smtpPort : int = config.get("gobal_config").get("SMTP").get("smtpPort")
 smtpUser : str = config.get("gobal_config").get("SMTP").get("smtpUser")
 smtpKey : str = config.get("gobal_config").get("SMTP").get("smtpKey")
 smtp_sender : str = config.get("gobal_config").get("SMTP").get("smtp_sender")
@@ -31,6 +32,7 @@ def sendLog(projectName):
     att["Content-Type"] = 'application/octet-stream'
     att["Content-Disposition"] = f"attachment; filename = {projectName + '.txt'}"
     mail.attach(att)
-    smtpObj = smtplib.SMTP(smtpHost, stmpPort)
+    if smtp_is_SSL:smtpObj = smtplib.SMTP_SSL(smtpHost, smtpPort)
+    elif smtp_is_SSL == False:smtpObj = smtplib.SMTP(smtpHost, smtpPort)
     smtpObj.login(smtpUser, smtpKey)
     smtpObj.sendmail(smtp_sender, smtp_sendto, mail.as_string())

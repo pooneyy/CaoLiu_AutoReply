@@ -13,7 +13,7 @@ from sendLog import sendLog
 
 DEBUG = False
 
-__verison__ = "2023.09.07-Based-0.23.09.07.1"
+__verison__ = "2023.09.13-Based-0.23.09.07.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")

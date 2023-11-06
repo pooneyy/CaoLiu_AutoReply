@@ -1,6 +1,6 @@
 # CaoLiu_AutoReply（腾讯云函数）
 
-注：当前分支基于 [0honus0/CaoLiu_AutoReply at 49bc1083b8081bf562ad81a097b49a39b0731ecf](https://github.com/0honus0/CaoLiu_AutoReply/tree/49bc1083b8081bf562ad81a097b49a39b0731ecf)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
+注：当前分支基于 [0honus0/CaoLiu_AutoReply at a4bee0b](https://github.com/0honus0/CaoLiu_AutoReply/tree/a4bee0b26d20818ca4893e82f1f6afd2b8173a6d)，此分支将会不时从[上游仓库](https://github.com/0honus0/CaoLiu_AutoReply/)同步更新。
 
 ### 更新日志
 

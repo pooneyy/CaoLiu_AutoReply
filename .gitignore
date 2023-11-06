@@ -1,6 +1,9 @@
 *.cookies
 .history
 config.yml
+*.bat
+*.exe
 *.log
 *.png
+*.rar
 *.zip

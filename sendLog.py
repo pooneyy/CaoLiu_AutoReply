@@ -11,6 +11,7 @@ try:
         config = yaml.load(file, Loader=yaml.FullLoader)
 except FileNotFoundError:...
 
+smtp_is_Enable : bool = config.get("gobal_config").get("SMTP").get("smtp_is_Enable",True)
 smtpHost : str = config.get("gobal_config").get("SMTP").get("smtpHost")
 smtp_is_SSL : bool = config.get("gobal_config").get("SMTP").get("smtp_is_SSL",False)
 smtpPort : int = config.get("gobal_config").get("SMTP").get("smtpPort")
@@ -34,5 +35,7 @@ def sendLog(projectName):
     mail.attach(att)
     if smtp_is_SSL:smtpObj = smtplib.SMTP_SSL(smtpHost, smtpPort)
     elif smtp_is_SSL == False:smtpObj = smtplib.SMTP(smtpHost, smtpPort)
-    smtpObj.login(smtpUser, smtpKey)
-    smtpObj.sendmail(smtp_sender, smtp_sendto, mail.as_string())
+    if smtp_is_Enable:
+        smtpObj.login(smtpUser, smtpKey)
+        smtpObj.sendmail(smtp_sender, smtp_sendto, mail.as_string())
+    else:...

@@ -25,6 +25,7 @@ gobal_config:
         apikey: "xxxx"
     # 腾讯云函数专用，用于向用户邮箱发送日志。
     SMTP:
+        smtp_is_Enable: true # 是否激活邮件推送
         smtpHost: "" # SMTP服务器，例如smtp.qq.com
         smtp_is_SSL: false # 是否使用SSL，默认为false
         smtpPort: 25 # SMTP端口，例如465

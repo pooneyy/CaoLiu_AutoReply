@@ -13,7 +13,7 @@ from sendLog import sendLog
 
 DEBUG = False
 
-__verison__ = "2024.08.26-Based-0.23.11.06.1"
+__verison__ = "2024.12.29-Based-0.24.12.29.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -436,7 +436,7 @@ class User:
         pat_moderator : str = "版主:([\s\S]*?)<\/span>"
         pat_username : str = "username=(\w+)"
         pat_user : str = 'class="bl">(.*)?</a>'
-        pat_all_title : str = '<h3><a href="([\s\S]*?)"'
+        pat_all_title : str = '<h3><a href="/([\s\S]*?)"'
         pat_all_content : str = '<h3><a href=".*" target="_blank" id=".*">(.*)<\/a><\/h3>'
         moderator : str = re.search(pat_moderator, content).group(0)
         username : List = re.findall(pat_username, moderator)
@@ -468,9 +468,9 @@ class User:
             for item in black_list:
                 try:
                     title.remove(item)
-                except:
-                    ...
-                log.debug(f"{self.username} remove {item} from list")
+                    log.debug(f"{self.username} remove {item} from list")
+                except Exception as e:
+                    log.error(f"{self.username} remove {item} from list 失败, 错误类型: {type(e).__name__} 描述: {e}")
 
             black_list : List = []
             log.debug(f"{self.username} 排除： {self.excludeContent}")
@@ -484,9 +484,9 @@ class User:
             for item in black_list:
                 try:
                     title.remove(item)
-                except:
-                    ...
-                log.debug(f"{self.username} remove {item} from list")
+                    log.debug(f"{self.username} remove {item} from list")
+                except Exception as e:
+                    log.error(f"{self.username} remove {item} from list 失败, 错误类型: {type(e).__name__} 描述: {e}")
 
         self.ReplyList = title
         log.debug(f"{self.username} get reply list number {str(len(title))}")
@@ -575,7 +575,9 @@ def main():
         if AutoUpdate:
             update(latestVesion)
         else:log.info(f"有新版本 {latestVesion} https://github.com/pooneyy/CaoLiu_AutoReply")
-
+    if Proxy:
+        proxyInfo = requests.get('http://myip.ipip.net/', proxies = proxies).text.replace('\n','')
+        log.info(f"已使用代理 {proxyInfo}")
     users = []
     for i in range(len(usersList)):
         user=User(usersList[i]['user'],usersList[i]['password'],usersList[i]['secret'])

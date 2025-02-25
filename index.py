@@ -13,7 +13,7 @@ from sendLog import sendLog
 
 DEBUG = False
 
-__verison__ = "2024.12.29-Based-0.24.12.29.1"
+__verison__ = "2025.02.25-Based-0.25.02.25.1"
 
 def outputLog(projectName):
     log = logging.getLogger(f"{projectName}")
@@ -68,6 +68,11 @@ if Proxy:
 else:
     proxies = {}
 DebugMode : bool = config.get("gobal_config").get("DebugMode", False)
+if DebugMode:
+    PollingTime = 1
+    ReplyLimit = 0
+    TimeIntervalStart = 0
+    TimeIntervalEnd = 1
 
 log = outputLog(LogFileName)
 
@@ -97,18 +102,23 @@ def retry(func):
             except IOError:
                 sleep(3)
                 retry_number -= 1
+                log.error(f"Error: {sys.exc_info()[0]}")
             except Exception as e:
                 log.error(e)
                 break
     return deco
 
+@retry
+def get_Proxy():
+    return requests.get('http://myip.ipip.net/', proxies = proxies).text.replace('\n','')
+
 def save_cookies(session : requests.Session , filename : str) -> None:
-    try:
-        with open(filename, 'wb') as f:
+    with open(filename, 'wb') as f:
+        try:
             pickle.dump(session.cookies, f)
             log.debug(f"save {filename} success")
-    except:
-        ...
+        except:
+            ...
 
 def load_cookies(session : requests.Session , filename : str) -> None:
     with open(filename, 'rb') as f:
@@ -340,7 +350,10 @@ class User:
             'verify':'verify',
             'Submit': '正在提交回覆..',
         }
-        res = requests.post(url = self.Post , data = data , headers = self.Headers , cookies = self.cookies , proxies = proxies)
+        try:res = requests.post(url = self.Post , data = data , headers = self.Headers , cookies = self.cookies , proxies = proxies)
+        except Exception as e:
+            log.error(f"{self.username} reply failed , the reason is: {type(e).__name__}")
+            return True
         if DEBUG:  print(res.text)
         if res.text.find("發貼完畢點擊進入主題列表") != -1:
             self.ReplyCount -= 1
@@ -349,8 +362,11 @@ class User:
         elif res.text.find("灌水預防機制") != -1:
             log.info(f"{self.username} reply failed , user replay too frequency")
             return True
-        elif res.text.find("所屬的用戶組") != -1:
+        elif res.text.find("每日最多能發") != -1:
             log.info(f"{self.username} reply failed , day reply times is over")
+            return False
+        elif res.text.find("請先登錄論壇") != -1:
+            log.info(f"{self.username} reply failed , account not logged in")
             return False
         elif res.text.find("管理員禁言, 類型為永久禁言") != -1:
             log.info(f"{self.username} reply failed , user is banned")
@@ -367,23 +383,23 @@ class User:
         elif res.text.find("標題為空或標題太長") != -1 or res.text.find("文章長度錯誤") != -1 :
             log.info(f"{self.username} reply failed , the title is {title} , the content is {content}")
             return True
-        elif res.text.find("403 Forbidden") != -1:
+        elif res.status_code == 403:
             log.info(f"{self.username} reply failed , HTTP 403 Error , 可能由于触发了风控 , IP被服务器拦截")
             return False
-        elif res.text.find("500 Internal Server Error") != -1:
+        elif res.status_code == 500:
             log.info(f"{self.username} reply failed , HTTP 500 Error")
             return True
-        elif res.text.find("Bad Gateway") != -1 or res.text.find("Bad gateway") != -1:
+        elif res.status_code == 502:
             log.info(f"{self.username} reply failed , HTTP 502 Error")
             return True
-        elif res.text.find("520: Web server is returning an unknown error") != -1:
+        elif res.status_code == 520:
             log.info(f"{self.username} reply failed , HTTP 520 Error")
             return True
         elif res.text.find("Cloudflare Ray ID") != -1:
             log.info(f"{self.username} reply failed , {re.search(r'<title>(.*?)</title>', res.text)}")
             return True
         else:
-            log.error(f"{self.username} reply {url} failed , unknown error")
+            log.error(f"{self.username} reply {url} failed , unknown error, status code : {res.status_code}")
             log.error(res.text)
             return False
 
@@ -452,11 +468,15 @@ class User:
             if self.RetryList > 0:
                 log.debug(f"{self.username} get list number error , retry get list , remaining retry times: %d" % self.RetryList)
                 self.RetryList -= 1
-                sleep(2)
+                sleep_time = random.randint(6,60)
+                log.debug(f"{self.username} sleep {sleep_time} seconds")
+                sleep(sleep_time)
                 self.get_today_list()
                 return
             else:
-                os._exit(0)
+                self.set_invalid()
+                self.s.close()
+                return
 
         
         if Forbid:
@@ -576,7 +596,7 @@ def main():
             update(latestVesion)
         else:log.info(f"有新版本 {latestVesion} https://github.com/pooneyy/CaoLiu_AutoReply")
     if Proxy:
-        proxyInfo = requests.get('http://myip.ipip.net/', proxies = proxies).text.replace('\n','')
+        proxyInfo = get_Proxy()
         log.info(f"已使用代理 {proxyInfo}")
     users = []
     for i in range(len(usersList)):
@@ -618,7 +638,7 @@ def main():
             user.browse(url)
             if not user.reply(url):
                 user.set_invalid()
-                continue        
+                continue
             user.like(url)
             sleep_time = random.randint(TimeIntervalStart,TimeIntervalEnd)
             log.debug(f"{user.get_username()} sleep {sleep_time} seconds")
@@ -634,25 +654,17 @@ def main():
 
         sleep(PollingTime)
 
-def checkHosts():
-    log.info("检查域名")
-    url = 'https://s.cky.qystu.cc/gh/pooneyy/1024-Host-List@main/1024_hosts.json'
-    hosts = json.loads(requests.get(url).text)
-    headers = {
-        'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'
-    }
-    for i in hosts:
-        try:
-            requests.get(f'https://{i}/index.php', headers=headers)
-            log.info(f"检查 {i} ：能访问")
-        except requests.exceptions.ConnectionError:
-            log.info(f"检查 {i} ：不能访问")
-    sendLog(LogFileName, ' - 调试模式')
+def debug_mode():
+    '''调试模式
+    调试模式不会发帖
+    '''
+    log.info("Debug mode")
+    main()
 
 def main_handler(event, context):
-    if DebugMode:checkHosts()
+    if DebugMode:debug_mode()
     else:main()
 
 if __name__ == '__main__':
-    if DebugMode:checkHosts()
+    if DebugMode:debug_mode()
     else:main()
